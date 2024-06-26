@@ -1,0 +1,7 @@
+.vscode/
+gist/
+*.exp
+*.exe
+*.obj
+*.pdb
+*.sublime-workspace
