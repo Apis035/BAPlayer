@@ -25,13 +25,13 @@ player: struct {
 
 main :: proc() {
 	Init()
-	defer Close()
 
 	rl.SetConfigFlags(window.flags)
 	rl.InitWindow(window.width, window.height, window.title)
 	defer rl.CloseWindow()
 
 	Load()
+	defer Unload()
 
 	rl.SetTargetFPS(window.fps)
 
@@ -72,6 +72,14 @@ Load :: proc() {
 	player.bg = rl.LoadTexture("data/image/BG_CS_PV2_71.jpg")
 	rl.SetTextureFilter(player.bg, .BILINEAR)
 }
+
+Unload :: proc() {
+	rl.UnloadFont(font.title)
+	rl.UnloadFont(font.subtitle)
+	rl.UnloadFont(font.time)
+}
+
+/*****************************************************************************/
 
 PADDING :: 32
 
@@ -123,12 +131,3 @@ Draw :: proc() {
 	barProgWidth := i32(player.position/player.length * cast(f64)window.width)
 	rl.DrawRectangle(0, window.height - barHover, barProgWidth, barHover, rl.ORANGE)
 }
-
-Close :: proc() {
-	rl.UnloadFont(font.title)
-	rl.UnloadFont(font.subtitle)
-	rl.UnloadFont(font.time)
-}
-
-
-
