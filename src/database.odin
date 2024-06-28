@@ -20,6 +20,8 @@ LoopPoint :: struct {
 	begin, end: f64,
 }
 
+bgmTotal := len(db.bgm)-1
+
 @(private="file")
 db := Database {
     artist = {

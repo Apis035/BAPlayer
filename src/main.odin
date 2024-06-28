@@ -30,6 +30,8 @@ player: struct {
 	bg:       rl.Texture,
 }
 
+track: int
+
 main :: proc() {
 	Init()
 
@@ -76,15 +78,8 @@ Load :: proc() {
 
 	bass.Init(-1, 44100, 0, nil, nil)
 
-	audio, title, artist, bpm, loop := DatabaseGet(2)
-	player.stream = bass.StreamCreateFile(false, bass.raw(audio), 0, 0, 0)
-	player.title = title
-	player.artist = artist
-	player.bpm = bpm
-	player.loop = loop
-	player.length = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetLength(player.stream, bass.POS_BYTE))
-
-	bass.ChannelPlay(player.stream, true)
+	track = 1
+	PlayerChangeTrack(track)
 }
 
 Unload :: proc() {
@@ -121,6 +116,19 @@ Update :: proc(dt: f32) {
 	}
 
 	player.position = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetPosition(player.stream, bass.POS_BYTE))
+
+	if rl.IsKeyPressed(.LEFT) {
+		if track > 1 {
+			track -= 1
+			PlayerChangeTrack(track)
+		}
+	}
+	if rl.IsKeyPressed(.RIGHT) {
+		if track < bgmTotal {
+			track += 1
+			PlayerChangeTrack(track)
+		}
+	}
 }
 
 Draw :: proc() {
@@ -148,4 +156,23 @@ Draw :: proc() {
 	/* Progress bar current position */
 	barProgWidth := i32(player.position/player.length * cast(f64)window.width)
 	rl.DrawRectangle(0, window.height - barHover, barProgWidth, barHover, rl.ORANGE)
+}
+
+/*****************************************************************************/
+
+PlayerChangeTrack :: proc(track: int) {
+	/* Free current audio */
+	if player.stream != 0 {
+		bass.StreamFree(player.stream)
+	}
+
+	audio, title, artist, bpm, loop := DatabaseGet(track)
+	player.stream = bass.StreamCreateFile(false, bass.raw(audio), 0, 0, 0)
+	player.title = title
+	player.artist = artist
+	player.bpm = bpm
+	player.loop = loop
+	player.length = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetLength(player.stream, bass.POS_BYTE))
+
+	bass.ChannelPlay(player.stream, true)
 }
