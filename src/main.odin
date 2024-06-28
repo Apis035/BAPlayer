@@ -3,6 +3,7 @@ package BAPlayer
 import rl "vendor:raylib"
 import "core:fmt"
 import "core:math"
+import "../bass"
 
 window: struct {
 	width:  i32,
@@ -15,10 +16,16 @@ window: struct {
 font: struct {title, subtitle, time: rl.Font}
 
 player: struct {
+	// Loaded from database
+	stream:   bass.HSTREAM,
 	title:    cstring,
 	artist:   cstring,
+	bpm:      i32,
+	loop:     LoopPoint,
+	// Audio state
 	position: f64,
 	length:   f64,
+	// Other
 	hover:    f32,
 	bg:       rl.Texture,
 }
@@ -55,11 +62,6 @@ Init :: proc() {
 	window.title = "BAPlayer"
 	window.fps = 30
 	window.flags = {.WINDOW_RESIZABLE, .MSAA_4X_HINT}
-
-	player.title = "Luminous Memory"
-	player.artist = "Mitsukiyo"
-	player.position = 80
-	player.length = 200
 }
 
 Load :: proc() {
@@ -71,12 +73,26 @@ Load :: proc() {
 
 	player.bg = rl.LoadTexture("data/image/BG_CS_PV2_71.jpg")
 	rl.SetTextureFilter(player.bg, .BILINEAR)
+
+	bass.Init(-1, 44100, 0, nil, nil)
+
+	audio, title, artist, bpm, loop := DatabaseGet(2)
+	player.stream = bass.StreamCreateFile(false, bass.raw(audio), 0, 0, 0)
+	player.title = title
+	player.artist = artist
+	player.bpm = bpm
+	player.loop = loop
+	player.length = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetLength(player.stream, bass.POS_BYTE))
+
+	bass.ChannelPlay(player.stream, true)
 }
 
 Unload :: proc() {
 	rl.UnloadFont(font.title)
 	rl.UnloadFont(font.subtitle)
 	rl.UnloadFont(font.time)
+
+	bass.Free()
 }
 
 /*****************************************************************************/
@@ -103,6 +119,8 @@ Update :: proc(dt: f32) {
 		window.width  = rl.GetScreenWidth()
 		window.height = rl.GetScreenHeight()
 	}
+
+	player.position = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetPosition(player.stream, bass.POS_BYTE))
 }
 
 Draw :: proc() {
