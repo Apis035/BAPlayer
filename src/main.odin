@@ -104,8 +104,14 @@ BAR_HOVER_DISTANCE :: 20
 BAR_HOVER_SPEED    :: 8
 
 Update :: proc(dt: f32) {
-	if rl.GetMousePosition().y > cast(f32)window.height - (BAR_HEIGHT + BAR_HOVER_DISTANCE) {
+	mousePos := rl.GetMousePosition()
+	if mousePos.y > cast(f32)window.height - (BAR_HEIGHT + BAR_HOVER_DISTANCE) {
 		player.hover = rl.Lerp(player.hover, BAR_HOVER_DISTANCE, BAR_HOVER_SPEED * dt)
+
+		if rl.IsMouseButtonDown(.LEFT) {
+			seekTo := cast(f64)mousePos.x/cast(f64)window.width * player.length
+			bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, seekTo), bass.POS_BYTE)
+		}
 	} else {
 		player.hover = rl.Lerp(player.hover, 0, BAR_HOVER_SPEED * dt)
 	}
