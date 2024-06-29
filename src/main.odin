@@ -168,8 +168,9 @@ Draw :: proc() {
 	DrawTextureCenter(player.bg, 0.75)
 
 	/* Artist, title */
-	rl.DrawTextEx(font.title,    player.title,  BOTTOM_LEFT + {0, TITLE_YOFFSET  + -player.hover}, cast(f32)font.title.baseSize,    0, rl.WHITE)
-	rl.DrawTextEx(font.subtitle, player.artist, BOTTOM_LEFT + {0, ARTIST_YOFFSET + -player.hover}, cast(f32)font.subtitle.baseSize, 0, rl.WHITE)
+	trackArtist := fmt.ctprintf("#%d %s", track, player.artist)
+	rl.DrawTextEx(font.title,    player.title, BOTTOM_LEFT + {0, TITLE_YOFFSET  + -player.hover}, cast(f32)font.title.baseSize,    0, rl.WHITE)
+	rl.DrawTextEx(font.subtitle, trackArtist,  BOTTOM_LEFT + {0, ARTIST_YOFFSET + -player.hover}, cast(f32)font.subtitle.baseSize, 0, rl.WHITE)
 
 	/* Time */
 	cm, cs := TimeToMinSec(player.position)
