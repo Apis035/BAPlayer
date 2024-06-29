@@ -185,6 +185,14 @@ Draw :: proc() {
 	/* Progress bar current position */
 	barProgWidth := i32(player.position/player.length * cast(f64)window.width)
 	rl.DrawRectangle(0, window.height - barHover, barProgWidth, barHover, rl.ORANGE)
+
+	/* Loop position */
+	if player.enableLoop {
+		loopBeginX := i32(player.loop.begin/player.length * cast(f64)window.width)
+		loopEndX   := i32(player.loop.end  /player.length * cast(f64)window.width)
+		rl.DrawRectangle(loopBeginX, window.height - barHover, 4, barHover, rl.MAROON)
+		rl.DrawRectangle(loopEndX-4, window.height - barHover, 4, barHover, rl.MAROON)
+	}
 }
 
 /*****************************************************************************/
