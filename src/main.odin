@@ -126,6 +126,13 @@ Update :: proc(dt: f32) {
 
 	player.position = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetPosition(player.stream, bass.POS_BYTE))
 
+	if player.position == player.length {
+		if track < bgmTotal {
+			track += 1
+			PlayerChangeTrack(track)
+		}
+	}
+
 	if rl.IsKeyPressed(.LEFT) {
 		if track > 1 {
 			track -= 1
@@ -213,8 +220,8 @@ PlayerChangeTrack :: proc(track: int) {
 	player.length = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetLength(player.stream, bass.POS_BYTE))
 
 	bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, player.loop.begin), bass.POS_LOOP)
-	bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, player.loop.end), bass.POS_END)
 	if player.enableLoop {
+		bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, player.loop.end), bass.POS_END)
 		bass.ChannelFlags(player.stream, bass.SAMPLE_LOOP, bass.SAMPLE_LOOP)
 	}
 
