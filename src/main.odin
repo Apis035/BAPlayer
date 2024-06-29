@@ -5,6 +5,8 @@ import "core:fmt"
 import "core:math"
 import "../bass"
 
+DEBUG :: true
+
 window: struct {
 	width:  i32,
 	height: i32,
@@ -52,7 +54,7 @@ main :: proc() {
 		rl.BeginDrawing()
 			rl.ClearBackground(rl.BLACK)
 			Draw()
-			rl.DrawFPS(16, 16)
+			when DEBUG do rl.DrawFPS(16, 16)
 		rl.EndDrawing()
 
 		free_all(context.temp_allocator)
