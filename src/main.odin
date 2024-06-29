@@ -17,18 +17,19 @@ font: struct {title, subtitle, time: rl.Font}
 
 player: struct {
 	// Loaded from database
-	stream:   bass.HSTREAM,
-	title:    cstring,
-	artist:   cstring,
-	bpm:      i32,
-	loop:     LoopPoint,
+	stream:     bass.HSTREAM,
+	title:      cstring,
+	artist:     cstring,
+	bpm:        i32,
+	loop:       LoopPoint,
 	// Audio state
-	position: f64,
-	length:   f64,
-	pause:    bool,
+	position:   f64,
+	length:     f64,
+	pause:      bool,
+	enableLoop: bool,
 	// Other
-	hover:    f32,
-	bg:       rl.Texture,
+	hover:      f32,
+	bg:         rl.Texture,
 }
 
 track: int
@@ -79,6 +80,7 @@ Load :: proc() {
 
 	bass.Init(-1, 44100, 0, nil, nil)
 
+	player.enableLoop = true
 	track = 1
 	PlayerChangeTrack(track)
 }
@@ -145,6 +147,17 @@ Update :: proc(dt: f32) {
 			bass.ChannelPlay(player.stream, false)
 		}
 	}
+
+	if rl.IsKeyPressed(.L) {
+		player.enableLoop = !player.enableLoop
+		if player.enableLoop {
+			bass.ChannelFlags(player.stream, bass.SAMPLE_LOOP, bass.SAMPLE_LOOP)
+			bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, player.loop.end), bass.POS_END)
+		} else {
+			bass.ChannelFlags(player.stream, 0, bass.SAMPLE_LOOP)
+			bass.ChannelSetPosition(player.stream, bass.ChannelGetLength(player.stream, bass.POS_BYTE), bass.POS_END)
+		}
+	}
 }
 
 Draw :: proc() {
@@ -192,7 +205,9 @@ PlayerChangeTrack :: proc(track: int) {
 
 	bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, player.loop.begin), bass.POS_LOOP)
 	bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, player.loop.end), bass.POS_END)
-	bass.ChannelFlags(player.stream, bass.SAMPLE_LOOP, bass.SAMPLE_LOOP)
+	if player.enableLoop {
+		bass.ChannelFlags(player.stream, bass.SAMPLE_LOOP, bass.SAMPLE_LOOP)
+	}
 
 	bass.ChannelPlay(player.stream, true)
 	player.pause = false
