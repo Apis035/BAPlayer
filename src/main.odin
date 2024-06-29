@@ -25,6 +25,7 @@ player: struct {
 	// Audio state
 	position: f64,
 	length:   f64,
+	pause:    bool,
 	// Other
 	hover:    f32,
 	bg:       rl.Texture,
@@ -135,6 +136,15 @@ Update :: proc(dt: f32) {
 			PlayerChangeTrack(track)
 		}
 	}
+
+	if rl.IsKeyPressed(.SPACE) {
+		player.pause = !player.pause
+		if player.pause {
+			bass.ChannelPause(player.stream)
+		} else {
+			bass.ChannelPlay(player.stream, false)
+		}
+	}
 }
 
 Draw :: proc() {
@@ -185,4 +195,5 @@ PlayerChangeTrack :: proc(track: int) {
 	bass.ChannelFlags(player.stream, bass.SAMPLE_LOOP, bass.SAMPLE_LOOP)
 
 	bass.ChannelPlay(player.stream, true)
+	player.pause = false
 }
