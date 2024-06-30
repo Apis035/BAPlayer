@@ -5,3 +5,8 @@ gist/
 *.obj
 *.pdb
 *.sublime-workspace
+
+# BGM
+data/bgm/
+!data/bgm/Theme_01.ogg
+!data/bgm/Theme_02.ogg
