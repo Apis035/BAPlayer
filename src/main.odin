@@ -155,13 +155,13 @@ Update :: proc(dt: f32) {
 		}
 	}
 
-	if rl.IsKeyPressed(.LEFT) {
+	if rl.IsKeyPressed(.LEFT) || rl.IsKeyPressedRepeat(.LEFT) {
 		if track > 1 {
 			track -= 1
 			PlayerChangeTrack(track)
 		}
 	}
-	if rl.IsKeyPressed(.RIGHT) {
+	if rl.IsKeyPressed(.RIGHT) || rl.IsKeyPressedRepeat(.RIGHT) {
 		if track < bgmTotal {
 			track += 1
 			PlayerChangeTrack(track)
