@@ -37,6 +37,7 @@ player: struct {
 }
 
 track: int
+drawHint: bool
 
 main :: proc() {
 	Init()
@@ -70,6 +71,7 @@ Init :: proc() {
 	window.title = TITLE
 	window.fps = 30
 	window.flags = {.WINDOW_RESIZABLE, .MSAA_4X_HINT}
+	drawHint = true
 }
 
 Load :: proc() {
@@ -187,6 +189,10 @@ Update :: proc(dt: f32) {
 			bass.ChannelSetPosition(player.stream, bass.ChannelGetLength(player.stream, bass.POS_BYTE), bass.POS_END)
 		}
 	}
+
+	if rl.IsKeyPressed(.F3) {
+		drawHint = !drawHint
+	}
 }
 
 Draw :: proc() {
@@ -207,6 +213,26 @@ Draw :: proc() {
 	time := fmt.ctprintf("%02d:%02d / %02d:%02d", cm, cs, lm, ls)
 	titleWidth := rl.MeasureTextEx(font.title, player.title, cast(f32)font.title.baseSize, 0).x
 	rl.DrawTextEx(font.time, time, BOTTOM_LEFT + {titleWidth + TIME_XOFFSET, TIME_YOFFSET + -player.hover}, cast(f32)font.time.baseSize, 0, rl.WHITE)
+
+	/* Keyboard keys hint */
+	KEYBOARD_HINTS :: []cstring {
+		"<F3>: toggle this hint",
+		"<L>: toggle loop",
+		"<1-9>: jump track",
+		"<Space>: pause/resume",
+		"<Left/Right>: change track",
+	}
+
+	if drawHint {
+		y: f32
+		for hint, i in KEYBOARD_HINTS {
+			font := font.time
+			size := rl.MeasureTextEx(font, hint, cast(f32)font.baseSize, 0)
+			pos  := BOTTOM_RIGHT - {size.x, y + 20 + player.hover}
+			y += size.y
+			rl.DrawTextEx(font, hint, pos, cast(f32)font.baseSize, 0, rl.WHITE)
+		}
+	}
 
 	/* Progress bar background */
 	barHover := BAR_HEIGHT + cast(i32)math.floor(player.hover)
