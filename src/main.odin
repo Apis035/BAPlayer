@@ -1,11 +1,13 @@
 package BAPlayer
 
+DEBUG :: true
+VERSION :: "v0.1"
+TITLE :: "BAPlayer " + VERSION
+
 import rl "vendor:raylib"
 import "core:fmt"
 import "core:math"
 import "../bass"
-
-DEBUG :: true
 
 window: struct {
 	width:  i32,
@@ -65,7 +67,7 @@ main :: proc() {
 Init :: proc() {
 	window.width = 1280
 	window.height = 720
-	window.title = "BAPlayer"
+	window.title = TITLE
 	window.fps = 30
 	window.flags = {.WINDOW_RESIZABLE, .MSAA_4X_HINT}
 }
