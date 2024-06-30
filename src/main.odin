@@ -137,6 +137,24 @@ Update :: proc(dt: f32) {
 		}
 	}
 
+	{
+		prevTrack := track
+		defer if prevTrack != track {
+			PlayerChangeTrack(track)
+		}
+		switch {
+		case rl.IsKeyPressed(.ZERO):  track = 1
+		case rl.IsKeyPressed(.ONE):   track = 10
+		case rl.IsKeyPressed(.TWO):   track = 20
+		case rl.IsKeyPressed(.THREE): track = 30
+		case rl.IsKeyPressed(.FOUR):  track = 40
+		case rl.IsKeyPressed(.FIVE):  track = 50
+		case rl.IsKeyPressed(.SIX):   track = 60
+		case rl.IsKeyPressed(.SEVEN): track = 70
+		case rl.IsKeyPressed(.EIGHT): track = 80
+		}
+	}
+
 	if rl.IsKeyPressed(.LEFT) {
 		if track > 1 {
 			track -= 1
