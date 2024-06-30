@@ -128,7 +128,7 @@ Update :: proc(dt: f32) {
 
 	player.position = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetPosition(player.stream, bass.POS_BYTE))
 
-	if player.position == player.length {
+	if player.stream != 0 && player.position == player.length {
 		if track < bgmTotal {
 			track += 1
 			PlayerChangeTrack(track)
