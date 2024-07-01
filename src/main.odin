@@ -105,6 +105,7 @@ PADDING :: 32
 
 TITLE_YOFFSET  :: -40
 ARTIST_YOFFSET :: -70
+TRACK_YOFFSET  :: -88
 TIME_XOFFSET   :: 14
 TIME_YOFFSET   :: -22
 
@@ -203,9 +204,12 @@ Draw :: proc() {
 	DrawTextureCenter(player.bg, 0.75)
 
 	/* Artist, title */
-	trackArtist := fmt.ctprintf("#%d %s", track, player.artist)
-	rl.DrawTextEx(font.title,    player.title, BOTTOM_LEFT + {0, TITLE_YOFFSET  + -player.hover}, cast(f32)font.title.baseSize,    0, rl.WHITE)
-	rl.DrawTextEx(font.subtitle, trackArtist,  BOTTOM_LEFT + {0, ARTIST_YOFFSET + -player.hover}, cast(f32)font.subtitle.baseSize, 0, rl.WHITE)
+	rl.DrawTextEx(font.title,    player.title,  BOTTOM_LEFT + {0, TITLE_YOFFSET  + -player.hover}, cast(f32)font.title.baseSize,    0, rl.WHITE)
+	rl.DrawTextEx(font.subtitle, player.artist, BOTTOM_LEFT + {0, ARTIST_YOFFSET + -player.hover}, cast(f32)font.subtitle.baseSize, 0, rl.WHITE)
+
+	/* Track */
+	trackText := fmt.ctprintf("#%d", track)
+	rl.DrawTextEx(font.time, trackText, BOTTOM_LEFT + {0, TRACK_YOFFSET + -player.hover}, cast(f32)font.time.baseSize, 0, rl.WHITE)
 
 	/* Time */
 	cm, cs := TimeToMinSec(player.position)
