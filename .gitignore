@@ -6,6 +6,10 @@ gist/
 *.pdb
 *.sublime-workspace
 
+# BG
+data/bg/
+!data/bg/BG_CS_PV2_71.jpg
+
 # BGM
 data/bgm/
 !data/bgm/Theme_01.ogg
