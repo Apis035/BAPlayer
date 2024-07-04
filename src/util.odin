@@ -12,6 +12,13 @@ DrawTextureCenter :: proc(texture: rl.Texture, alpha: f32) {
     rl.DrawTexturePro(texture, source, dest, origin, 0, rl.Fade(rl.WHITE, alpha))
 }
 
+DrawTextShadow :: proc(font: rl.Font, text: cstring, position: rl.Vector2) {
+    BLACK :: rl.Color{0, 0, 0, 128}
+    OFFSET :: rl.Vector2{2, 2}
+    rl.DrawTextEx(font, text, position + OFFSET, cast(f32)font.baseSize, 0, BLACK)
+    rl.DrawTextEx(font, text, position, cast(f32)font.baseSize, 0, rl.WHITE)
+}
+
 TimeToMinSec :: proc(time: f64) -> (min, sec: i32) {
     time := cast(i32)time
     min = time / 60

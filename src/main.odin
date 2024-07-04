@@ -209,19 +209,29 @@ Draw :: proc() {
 	}
 
 	/* Artist, title */
-	rl.DrawTextEx(font.title,    player.title,  BOTTOM_LEFT + {0, TITLE_YOFFSET  + -player.hover}, cast(f32)font.title.baseSize,    0, rl.WHITE)
-	rl.DrawTextEx(font.subtitle, player.artist, BOTTOM_LEFT + {0, ARTIST_YOFFSET + -player.hover}, cast(f32)font.subtitle.baseSize, 0, rl.WHITE)
+	{
+		titlePos    := BOTTOM_LEFT + {0, TITLE_YOFFSET  + -player.hover}
+		subtitlePos := BOTTOM_LEFT + {0, ARTIST_YOFFSET + -player.hover}
+		DrawTextShadow(font.title,    player.title,  titlePos)
+		DrawTextShadow(font.subtitle, player.artist, subtitlePos)
+	}
 
 	/* Track */
-	trackText := fmt.ctprintf("#%d", track)
-	rl.DrawTextEx(font.time, trackText, BOTTOM_LEFT + {0, TRACK_YOFFSET + -player.hover}, cast(f32)font.time.baseSize, 0, rl.WHITE)
+	{
+		trackText := fmt.ctprintf("#%d", track)
+		trackPos  := BOTTOM_LEFT + {0, TRACK_YOFFSET + -player.hover}
+		DrawTextShadow(font.time, trackText, trackPos)
+	}
 
 	/* Time */
-	cm, cs := TimeToMinSec(player.position)
-	lm, ls := TimeToMinSec(player.length)
-	time := fmt.ctprintf("%02d:%02d / %02d:%02d", cm, cs, lm, ls)
-	titleWidth := rl.MeasureTextEx(font.title, player.title, cast(f32)font.title.baseSize, 0).x
-	rl.DrawTextEx(font.time, time, BOTTOM_LEFT + {titleWidth + TIME_XOFFSET, TIME_YOFFSET + -player.hover}, cast(f32)font.time.baseSize, 0, rl.WHITE)
+	{
+		cm, cs := TimeToMinSec(player.position)
+		lm, ls := TimeToMinSec(player.length)
+		time := fmt.ctprintf("%02d:%02d / %02d:%02d", cm, cs, lm, ls)
+		titleWidth := rl.MeasureTextEx(font.title, player.title, cast(f32)font.title.baseSize, 0).x
+		timePos := BOTTOM_LEFT + {titleWidth + TIME_XOFFSET, TIME_YOFFSET + -player.hover}
+		DrawTextShadow(font.time, time, timePos)
+	}
 
 	/* Keyboard keys hint */
 	KEYBOARD_HINTS :: []cstring {
@@ -239,7 +249,7 @@ Draw :: proc() {
 			size := rl.MeasureTextEx(font, hint, cast(f32)font.baseSize, 0)
 			pos  := BOTTOM_RIGHT - {size.x, y + 20 + player.hover}
 			y += size.y
-			rl.DrawTextEx(font, hint, pos, cast(f32)font.baseSize, 0, rl.WHITE)
+			DrawTextShadow(font, hint, pos)
 		}
 	}
 
