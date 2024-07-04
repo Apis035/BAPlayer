@@ -36,6 +36,8 @@ player: struct {
 	bg:         rl.Texture,
 }
 
+defaultBg: rl.Texture
+
 track: int
 drawHint: bool
 
@@ -81,8 +83,8 @@ Load :: proc() {
 	font.subtitle = rl.LoadFontEx(NOTO_SANS_SC, 32, nil, 0)
 	font.time     = rl.LoadFontEx(NOTO_SANS_SC, 24, nil, 0)
 
-	player.bg = rl.LoadTexture("data/image/BG_CS_PV2_71.jpg")
-	rl.SetTextureFilter(player.bg, .BILINEAR)
+	defaultBg = rl.LoadTexture("data/bg/" + DEFAULT_BG + ".jpg")
+	rl.SetTextureFilter(defaultBg, .BILINEAR)
 
 	bass.Init(-1, 44100, 0, nil, nil)
 
@@ -201,7 +203,10 @@ Draw :: proc() {
 	BOTTOM_RIGHT := rl.Vector2{cast(f32)window.width, cast(f32)window.height} + {-PADDING, -PADDING}
 
 	/* Background */
-	DrawTextureCenter(player.bg, 0.75)
+	{
+		bg := player.bg.id != 0 ? player.bg : defaultBg
+		DrawTextureCenter(bg, 0.9)
+	}
 
 	/* Artist, title */
 	rl.DrawTextEx(font.title,    player.title,  BOTTOM_LEFT + {0, TITLE_YOFFSET  + -player.hover}, cast(f32)font.title.baseSize,    0, rl.WHITE)
@@ -263,13 +268,18 @@ PlayerChangeTrack :: proc(track: int) {
 		bass.StreamFree(player.stream)
 	}
 
-	audio, title, artist, bpm, loop := DatabaseGet(track)
+	/* Unload bg */
+	rl.UnloadTexture(player.bg)
+
+	audio, title, artist, bpm, loop, bg := DatabaseGet(track)
 	player.stream = bass.StreamCreateFile(false, bass.raw(audio), 0, 0, 0)
 	player.title = title
 	player.artist = artist
 	player.bpm = bpm
 	player.loop = loop
 	player.length = bass.ChannelBytes2Seconds(player.stream, bass.ChannelGetLength(player.stream, bass.POS_BYTE))
+	player.bg = rl.LoadTexture(bg)
+	rl.SetTextureFilter(player.bg, .BILINEAR)
 
 	bass.ChannelSetPosition(player.stream, bass.ChannelSeconds2Bytes(player.stream, player.loop.begin), bass.POS_LOOP)
 	if player.enableLoop {
