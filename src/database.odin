@@ -28,9 +28,9 @@ bgmTotal := len(db.bgm)-1
 @(private="file")
 db := Database {
     artist = {
-        /* 0 */ "Mitsukiyo",
-        /* 1 */ "KARUT",
-        /* 2 */ "Nor",
+        0 = "Mitsukiyo",
+        1 = "KARUT",
+        2 = "Nor",
     },
     bgm = {
         {/* 0 */},
