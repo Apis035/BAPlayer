@@ -199,6 +199,7 @@ Update :: proc(dt: f32) {
 }
 
 Draw :: proc() {
+	TOP_RIGHT    := rl.Vector2{cast(f32)window.width, 0}                      + {-PADDING, PADDING}
 	BOTTOM_LEFT  := rl.Vector2{0, cast(f32)window.height}                     + {PADDING,  -PADDING}
 	BOTTOM_RIGHT := rl.Vector2{cast(f32)window.width, cast(f32)window.height} + {-PADDING, -PADDING}
 
@@ -247,7 +248,7 @@ Draw :: proc() {
 		for hint, i in KEYBOARD_HINTS {
 			font := font.time
 			size := rl.MeasureTextEx(font, hint, cast(f32)font.baseSize, 0)
-			pos  := BOTTOM_RIGHT - {size.x, y + 20 + player.hover}
+			pos  := TOP_RIGHT + {-size.x, y - 8}
 			y += size.y
 			DrawTextShadow(font, hint, pos)
 		}
